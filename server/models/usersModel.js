@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema({
         validate: [validateEmail, 'Please fill a valid Email Address'],
         required: true
     },
+    phone: {
+        type: String,
+        trim: true,
+        required: true
+    },
     password: {
         type: String,
         required: true

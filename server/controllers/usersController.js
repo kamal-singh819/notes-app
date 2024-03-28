@@ -4,49 +4,52 @@ import jwt from 'jsonwebtoken';
 
 const registerController = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
-        if (!name || !email || !password) {
-            throw new Error('All fields are mandatory');
+        const { name, email, phone, password } = req.body.bodyData;
+        if (!name || !email || !phone || !password) {
+            return res.send({statusCode: 400, message: "All fields are mandatory"});
         }
         const userAvailabe = await usersModel.find({ email });
-        if (!userAvailabe) {
-            throw new Error('User already Exists');
+        if (userAvailabe.length) {
+            return res.send({statusCode: 400, message: "EXISTS"});
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new usersModel({ name, email, password: hashedPassword });
+        const user = new usersModel({ name, email, phone, password: hashedPassword });
         await user.save();
-        if (user) res.status(201).json({ message: "User Created", name, email });
+        if (user) return res.status(201).send({ message: "User Created", name, email, phone });
         else {
             throw new Error('User details is not valid!!!');
         }
     } catch (error) {
-        res.status(400).json({message: error});
+        return res.send({statusCode: 400, message: error});
     }
 }
 
 const loginController = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password } = req.body.bodyData;
+        console.log(email, password);
         if (!email || !password) {
-            throw new Error('All fields are mandatory');
+            return res.send({statusCode: 400, message: "MISSING"});
         }
-        const user = await usersModel.findOne({ email });
-        if (!user) {
-            throw new Error('You have to register first');
+        const user = await usersModel.find({ email });
+        console.log(user);
+        if (!user.length) {
+            return res.send({statusCode: 400, message: "NOT REGISTERED"});
         }
         const comparePasswords = await bcrypt.compare(password, user.password);
         if (comparePasswords) {
             const accessToken = jwt.sign({
                 id: user._id
             }, process.env.ACCESS_TOKEN_KEY, { expiresIn: '540m' });
-            res.status(200).json({ accessToken: accessToken });
+            res.status(200).send({ accessToken: accessToken });
         }
         else {
-            throw new Error('Email or Password is wrong');
+            console.log("not Matching");
+            return res.send({statusCode: 400, message: "WRONG"});
         }
 
     } catch (error) {
-        res.status(404).json({message: error });
+        return res.status(404).json({message: error });
     }
 }
 const currentUserController = async (req, res) => {

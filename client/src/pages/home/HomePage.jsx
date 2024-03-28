@@ -8,7 +8,7 @@ import axios from 'axios';
 const HomePage = () => {
     const [categoryNotes, setCategoryNotes] = useState([]);
     const [category, setCategory] = useState('search'); //by default get all the notes
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmJjYTZiMTEwZDk5ODdmN2E0MTQ0OSIsImlhdCI6MTcxMTYwMDc4MSwiZXhwIjoxNzExNjMzMTgxfQ.P0_-_r1JzS4jeDlkL0zzQ9q0TbTmAlVw1QUgi3hLxrY";
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDVhZGVkOTNkMzE1Y2JiOWE5MWZhOCIsImlhdCI6MTcxMTY0ODI3MSwiZXhwIjoxNzExNjgwNjcxfQ.qEWkbyvfDDh7lUNU-PMc8AMgP-mPxZHWkVJwROdPSTM";
 
     useEffect(() => {
         async function fetchData() {
