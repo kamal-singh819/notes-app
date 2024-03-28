@@ -1,0 +1,50 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.homeContainer {
+    padding: 1rem;
+    .tasksCategorySection {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .tasksCategories {
+            display: flex;
+            overflow-x: scroll;
+            gap: 1rem;
+            >p {
+                border: 1px solid black;
+                padding: 0.5rem 1rem;
+                border-radius: 4rem;
+                cursor: pointer;
+            }
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+        .buttons {
+            display: flex;
+            gap: 1rem;
+        }
+    }
+    .tasksContainer{
+        margin-top: 2rem;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .homeContainer {
+        padding: 2rem;
+        .tasksCategorySection {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+    }
+}

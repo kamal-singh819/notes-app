@@ -1,0 +1,54 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.registerContainer, .loginContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 6rem;
+    >div{
+        display: flex;
+        flex-direction: column;
+        gap: 1.1rem;
+        padding: 2rem;
+        width: 100%;
+        >form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            >input {
+                font-size: 1.1rem;
+                padding: 0.5rem 1rem;
+                outline: none;
+            }
+            >button {
+                padding: 0.5rem 1rem;
+            }
+        }
+        >.redirect {
+            display: flex;
+            gap: 0.5rem;
+        }
+    }
+}
+
+.modalCloseButton {
+    position: absolute;
+    border: 1px solid grey;
+    padding: 0.5rem;
+    border-radius: 10%;
+    background-color: white;
+    top: 0.5rem;
+    right: 0.5rem;
+    cursor: pointer;
+}
+
+@media (min-width: 576px) {
+    .registerContainer, .loginContainer {
+        >div {
+            width: 40rem;
+        }
+    }
+}
