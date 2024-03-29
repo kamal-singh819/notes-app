@@ -4,13 +4,13 @@ import jwt from 'jsonwebtoken';
 
 const registerController = async (req, res) => {
     try {
-        const { name, email, phone, password } = req.body.bodyData;
+        const { name, email, phone, password } = req.body;
         if (!name || !email || !phone || !password) {
-            return res.send({statusCode: 400, message: "All fields are mandatory"});
+            return res.send({ statusCode: 400, message: "All fields are mandatory" });
         }
         const userAvailabe = await usersModel.find({ email });
         if (userAvailabe.length) {
-            return res.send({statusCode: 400, message: "EXISTS"});
+            return res.send({ statusCode: 400, message: "EXISTS" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new usersModel({ name, email, phone, password: hashedPassword });
@@ -20,41 +20,41 @@ const registerController = async (req, res) => {
             throw new Error('User details is not valid!!!');
         }
     } catch (error) {
-        return res.send({statusCode: 400, message: error});
+        return res.send({ statusCode: 400, message: error });
     }
 }
 
 const loginController = async (req, res) => {
     try {
-        const { email, password } = req.body.bodyData;
-        console.log(email, password);
+        const { email, password } = req.body;
         if (!email || !password) {
-            return res.send({statusCode: 400, message: "MISSING"});
+            return res.send({ statusCode: 400, message: "MISSING" });
         }
-        const user = await usersModel.find({ email });
-        console.log(user);
+        const user = await usersModel.find({ email: email });
         if (!user.length) {
-            return res.send({statusCode: 400, message: "NOT REGISTERED"});
+            return res.send({ statusCode: 401, message: "NOT REGISTERED" });
         }
-        const comparePasswords = await bcrypt.compare(password, user.password);
-        if (comparePasswords) {
-            const accessToken = jwt.sign({
-                id: user._id
-            }, process.env.ACCESS_TOKEN_KEY, { expiresIn: '540m' });
-            res.status(200).send({ accessToken: accessToken });
-        }
-        else {
-            console.log("not Matching");
-            return res.send({statusCode: 400, message: "WRONG"});
-        }
+        bcrypt.compare(password, user[0].password, (err, resp) => {
+            if (err) {
+                return res.send({ statusCode: 400, message: "Something wrong!!" });
+            }
+            else if (resp) {
+                const accessToken = jwt.sign({
+                    id: user[0]._id
+                }, process.env.ACCESS_TOKEN_KEY, { expiresIn: '540m' });
+                console.log(accessToken);
+                return res.send({ statusCode: 200, accessToken: accessToken, name: user[0].name });
+            }
+            else return res.json({ success: false, message: 'UNMATCHED' });
+        });
 
     } catch (error) {
-        return res.status(404).json({message: error });
+        return res.status(404).json({ message: error });
     }
 }
 const currentUserController = async (req, res) => {
     try {
-        res.json({LoggedInUserId: req.id});
+        res.json({ LoggedInUserId: req.id });
     } catch (error) {
         res.status(404).json({ error: 404, message: "Route not found." });
     }

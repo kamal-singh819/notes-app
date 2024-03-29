@@ -1,54 +1,53 @@
 import { Link } from 'react-router-dom';
 import styles from './LoginRegister.module.scss';
-import { useState } from 'react';
-const Login = ({ loginToggleHandler }) => {
-    const [userLoginDetails, setUserLoginDetails] = useState({});
-    async function loginUser() {
-        try{
-            const options = {
-                method: 'POST',
-                bodyData: userLoginDetails
-            }
-            console.log(userLoginDetails);
-            const response = await axios.post(`http://localhost:5001/users/login`, options);
-            console.log(response);
-            if(response.data.message === "MISSING"){
+import { useRef } from 'react';
+import axios from 'axios';
+const Login = ({ loginToggleHandler, setModelIsOpen, setAnyChange, setUserName }) => {
+    const emailRef = useRef();
+    const passwordRef = useRef();
+
+    async function loginUser(email, password) {
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `http://localhost:5001/users/login`,
+                data: { email, password }
+            });
+
+            if (response.data.message === "MISSING") {
                 console.log("All fields are mandatory");
             }
-            else if(response.data.message === "NOT REGISTERED") {
+            else if (response.data.message === "NOT REGISTERED") {
                 console.log("Your are not registered. Please Register first");
             }
-            else if(response.data.message === "WRONG") {
+            else if (response.data.message === "WRONG") {
                 console.log("Email or Password is Wrong");
             }
-            else if(response.data.accessToken) {
-                console.log(response.data.accessToken);
+            else if (response.data.accessToken) {
+                console.log("response", response.data);
+                localStorage.setItem("accessToken", response.data.accessToken);
+                setUserName((response.data.name).split(' ')[0]);
+                setAnyChange(prev => !prev);
+                console.log("Token generated and saved in local Storage");
             }
         }
-        catch {
-            console.log('Error');
+        catch (e) {
+            console.log(e.message);
         }
     }
     function handleLogin(e) {
         e.preventDefault();
-        const formData = new FormData(e.target);
-        const email = formData.get('email');
-        const password = formData.get('password');
-        if(!email || !password) {
-            console.log("All fields are Mandatory");
-            return;
-        }
-        setUserLoginDetails({email, password});
-        loginUser();
+        loginUser(emailRef.current.value.trim(), passwordRef.current.value.trim());
+        setModelIsOpen(false);
     }
 
     return <div className={styles.loginContainer}>
         <div>
             <h2>Sign in Yourself</h2>
             <form className={styles.loginForm} onSubmit={handleLogin}>
-                <input name='email' type="email" placeholder='e.g. example@gmail.com' />
-                <input name='password' type="password" placeholder='Password' />
-                <button type="submit" onSubmit={handleLogin}>Login</button>
+                <input ref={emailRef} type="email" placeholder='e.g. example@gmail.com' />
+                <input ref={passwordRef} type="password" placeholder='Password' />
+                <button type="submit">Login</button>
             </form>
             <div className={styles.redirect}>
                 <p>Don't have account</p>

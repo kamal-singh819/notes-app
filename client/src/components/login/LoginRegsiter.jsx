@@ -18,7 +18,7 @@ const modalStyle = {
 
 Modal.setAppElement('#root');
 
-const LoginRegister = ({ modelIsOpen, setModelIsOpen }) => {
+const LoginRegister = ({ modelIsOpen, setModelIsOpen, setAnyChange, setUserName }) => {
     const [showLogin, setShowLogin] = useState(true);
 
     function loginToggleHandler(showLogin) {
@@ -28,16 +28,12 @@ const LoginRegister = ({ modelIsOpen, setModelIsOpen }) => {
     function closeModal() {
         setModelIsOpen(false);
     }
-    function afterOpenModal() {
-        subtitle.style.color = '#f00';
-    }
-    let subtitle;
     return <>
         <div>
-            <Modal isOpen={modelIsOpen} onRequestClose={closeModal} style={modalStyle} contentLabel='Example Modal'>
+            <Modal isOpen={modelIsOpen} onRequestClose={closeModal} style={modalStyle} contentLabel='Login Register Modal'>
                 <button onClick={closeModal} className={styles.modalCloseButton}>X</button>
                 <Routes>
-                    {showLogin ? <Route path='/login' element={<Login loginToggleHandler={loginToggleHandler} />}></Route> : <Route path='/register' element={<Register loginToggleHandler={loginToggleHandler} />}></Route>}
+                    {showLogin ? <Route path='/login' element={<Login loginToggleHandler={loginToggleHandler} setModelIsOpen={setModelIsOpen} setAnyChange={setAnyChange} setUserName={setUserName} />}></Route> : <Route path='/register' element={<Register loginToggleHandler={loginToggleHandler} />}></Route>}
                 </Routes>
             </Modal>
         </div>

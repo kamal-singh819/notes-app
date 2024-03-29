@@ -28,6 +28,23 @@
         .buttons {
             display: flex;
             gap: 1rem;
+            >button {
+                border: 1px solid white;
+                padding: 0.5rem 1rem;
+                color: white;
+                border-radius: 0.5rem;
+                cursor: pointer;
+                font-weight: 700;
+                &:nth-child(1) {
+                    background-color: #386641;
+                }
+                &:nth-child(2) {
+                    background-color: #780000;
+                }
+                &:nth-child(3) {
+                    background-color: #fca311;
+                }
+            }
         }
     }
     .tasksContainer{

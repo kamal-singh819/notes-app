@@ -2,7 +2,7 @@ import notesModel from "../models/notesModel.js";
 
 const getNotesController = async (req, res) => {
     try {
-        if (req.query.value === "search") {
+        if (req.query.search) {
             const value = req.query.search;
             const searchRegex = new RegExp(value, 'i');
             const data = (await notesModel.find({ title: { $regex: searchRegex }, user_id: req.id }));
@@ -31,12 +31,11 @@ const getNotesController = async (req, res) => {
 const addNoteController = async (req, res) => {
     try {
         const obj = req.body;
-        console.log(obj);
-        const alreadyPresent = await notesModel.findOne({ title: obj.title });
+        // here req.id is coming after token validation
+        const alreadyPresent = await notesModel.findOne({ title: obj.title, user_id: req.id });
         if (alreadyPresent) {
             return res.status(400).json({ message: "Note is already added" });
         }
-        // here req.id is coming after token validation
         const newNote = new notesModel({ ...obj, user_id: req.id });
         await newNote.save();
         return res.status(201).send({ message: "Note Created!", data: newNote });
@@ -79,7 +78,7 @@ const deleteNoteController = async (req, res) => {
 
 const latestUpdatedController = async (req, res) => {
     try {
-        const data = await notesModel.find().sort({ updatedAt: -1 }).limit(3);
+        const data = await notesModel.find({ user_id: req.id }).sort({ updatedAt: -1 }).limit(3);
         return res.status(200).send({ message: "Last three updated", data: data });
     } catch (error) {
         return res.status(404).send({ message: "Route not found", data: null });
@@ -88,7 +87,8 @@ const latestUpdatedController = async (req, res) => {
 
 const hideNotesController = async (req, res) => {
     try {
-        const hideIds = req.query.hide_id;
+        const hideIds = req.body;
+        console.log(hideIds);
         if (Array.isArray(hideIds)) {
             await notesModel.updateMany({ user_id: req.id, _id: { $in: hideIds } }, { $set: { isHide: true } });
             return res.status(200).send({ message: "Multiple Soft Delete or Hide successfull" });
