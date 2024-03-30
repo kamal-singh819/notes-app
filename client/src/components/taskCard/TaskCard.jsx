@@ -1,10 +1,9 @@
 import styles from './TaskCard.module.scss';
 import { RiEditBoxLine } from "react-icons/ri";
 import { MdDeleteForever } from "react-icons/md";
-import { MdOutlineHideImage } from "react-icons/md";
 import axios from 'axios';
 
-const TaskCard = ({ noteDetail, setAnyChange, setHideNotes, openAddTaskModal }) => {
+const TaskCard = ({ noteDetail, setAnyChange, setMultiDeleteNotes, openAddTaskModal, currentCategory }) => {
     const token = JSON.parse(localStorage.getItem("nameAndToken"))?.token;
     const updatedDate = noteDetail.updatedAt.substring(0, 10);
     const updatedTime = noteDetail.updatedAt.substring(11, 19);
@@ -20,6 +19,7 @@ const TaskCard = ({ noteDetail, setAnyChange, setHideNotes, openAddTaskModal }) 
             }
         });
         setAnyChange(prev => !prev);
+        console.log("delete single");
     }
     async function handleHide(currentId) {
         await axios({
@@ -36,14 +36,15 @@ const TaskCard = ({ noteDetail, setAnyChange, setHideNotes, openAddTaskModal }) 
         openAddTaskModal();
     }
 
-    function handleCheckBox(currentId) {
-        setHideNotes(prev => [...prev, currentId]);
+    function handleCheckBox(e, currentId) {
+        if(e.target.checked) setMultiDeleteNotes(prev => [...prev, currentId]);
+        else setMultiDeleteNotes(prev => [...prev].filter(ele => ele !== currentId));
     }
 
-    return <div className={styles.taskCard} style={noteDetail.isHide ? {backgroundColor: "#ff99c8"} : {backgroundColor: "#a9def9"}}>
+    return <div className={styles.taskCard} style={noteDetail.isHide ? {backgroundColor: "#ffe5ec"} : {backgroundColor: "#caf0f8"}}>
         <div className={styles.icons}>
-            <input type="checkbox" onClick={() => handleCheckBox(noteDetail._id)} />
-            <MdOutlineHideImage onClick={() => handleHide(noteDetail._id)}/>
+            <input type="checkbox" onClick={(e) => handleCheckBox(e, noteDetail._id)} />
+            <button onClick={() => handleHide(noteDetail._id)} className={styles.hideUnhideButton} style={noteDetail.isHide ? {backgroundColor: "#ffffff"}:{backgroundColor: "#fca311"}}>{noteDetail.isHide ? "UNHIDE": "HIDE"}</button>
             <RiEditBoxLine onClick={() => handleEditTask(noteDetail)}/>
             <MdDeleteForever onClick={() => handleDelete(noteDetail._id)} />
         </div>

@@ -62,11 +62,12 @@ const updateNoteController = async (req, res) => {
 const deleteNoteController = async (req, res) => {
     try {
         const deleteId = req.query.id;
-        if (Array.isArray(deleteId)) {
-            await notesModel.deleteMany({ user_id: req.id, _id: { $in: deleteId } });
+        const arrOfIdToDelete = req.body;
+        if (Array.isArray(arrOfIdToDelete)) {
+            await notesModel.deleteMany({ user_id: req.id, _id: { $in: arrOfIdToDelete } });
             return res.status(200).send({ message: "Multiple Notes Deleted successfully" });
         }
-        else {
+        if(deleteId) {
             await notesModel.deleteOne({ user_id: req.id, _id: deleteId });
             return res.status(200).send({ message: "Single Note Deleted successfully" });
         }
@@ -87,15 +88,11 @@ const latestUpdatedController = async (req, res) => {
 
 const hideNotesController = async (req, res) => {
     try {
-        const hideIds = req.body;
         const singleHideId = req.query.id
-        console.log(hideIds);
-        if (Array.isArray(hideIds)) {
-            await notesModel.updateMany({ user_id: req.id, _id: { $in: hideIds } }, { $set: { isHide: true } });
-            return res.status(200).send({ message: "Multiple Soft Delete or Hide successfull" });
-        }
         if(singleHideId){
-            await notesModel.updateOne({ user_id: req.id, _id: singleHideId }, { $set: { isHide: true } });
+            const note = await notesModel.findOne({ user_id: req.id, _id: singleHideId });
+            const reverseHide = !note.isHide;
+            await notesModel.updateOne({ user_id: req.id, _id: singleHideId }, { $set: { isHide: reverseHide } });
             return res.status(200).send({ message: "Single Soft Delete or Hide successfull" });
         }
     } catch (error) {

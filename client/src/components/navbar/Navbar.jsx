@@ -6,7 +6,7 @@ import LogoutUserComponent from "../logoutUser/LogoutUserComponent";
 import axios from "axios";
 
 
-const Navbar = ({ openModal, setCategoryNotes, setAnyChange }) => {
+const Navbar = ({ openLoginModal, setCategoryNotes, setAnyChange }) => {
     const token = JSON.parse(localStorage.getItem("nameAndToken"))?.token;
     const searchRef = useRef();
     const isLoggedIn = !!token;
@@ -30,7 +30,7 @@ const Navbar = ({ openModal, setCategoryNotes, setAnyChange }) => {
             <input ref={searchRef} onChange={handleSearch} type="search" placeholder="Search Your Notes" />
             <FaSearch className={styles.searchIcon} />
         </form>
-        {isLoggedIn ? <LogoutUserComponent setAnyChange={setAnyChange} /> : <Link to="/login" className={styles.loginButton} onClick={() => openModal(true)}>Login</Link>}
+        {isLoggedIn ? <LogoutUserComponent setAnyChange={setAnyChange} /> : <button onClick={openLoginModal} className={styles.loginButton}>Login</button>}
     </nav>
 }
 
