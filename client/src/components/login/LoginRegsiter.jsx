@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import Login from './Login';
 import Register from './Register';
@@ -18,7 +19,8 @@ const modalStyle = {
 
 Modal.setAppElement('#root');
 
-const LoginRegister = ({ modelIsOpen, setModelIsOpen, setAnyChange, setUserName }) => {
+const LoginRegister = ({ modelIsOpen, setModelIsOpen, setAnyChange }) => {
+    const navigate = useNavigate();
     const [showLogin, setShowLogin] = useState(true);
 
     function loginToggleHandler(showLogin) {
@@ -27,13 +29,14 @@ const LoginRegister = ({ modelIsOpen, setModelIsOpen, setAnyChange, setUserName 
 
     function closeModal() {
         setModelIsOpen(false);
+        navigate('/');
     }
     return <>
         <div>
             <Modal isOpen={modelIsOpen} onRequestClose={closeModal} style={modalStyle} contentLabel='Login Register Modal'>
                 <button onClick={closeModal} className={styles.modalCloseButton}>X</button>
                 <Routes>
-                    {showLogin ? <Route path='/login' element={<Login loginToggleHandler={loginToggleHandler} setModelIsOpen={setModelIsOpen} setAnyChange={setAnyChange} setUserName={setUserName} />}></Route> : <Route path='/register' element={<Register loginToggleHandler={loginToggleHandler} />}></Route>}
+                    {showLogin ? <Route path='/login' element={<Login loginToggleHandler={loginToggleHandler} setModelIsOpen={setModelIsOpen} setAnyChange={setAnyChange} />}></Route> : <Route path='/register' element={<Register loginToggleHandler={loginToggleHandler} />}></Route>}
                 </Routes>
             </Modal>
         </div>

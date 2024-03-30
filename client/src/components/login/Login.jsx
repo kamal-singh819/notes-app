@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
 import styles from './LoginRegister.module.scss';
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import axios from 'axios';
-const Login = ({ loginToggleHandler, setModelIsOpen, setAnyChange, setUserName }) => {
+const Login = ({ loginToggleHandler, setModelIsOpen, setAnyChange}) => {
     const emailRef = useRef();
     const passwordRef = useRef();
+    const navigate = useNavigate();
 
     async function loginUser(email, password) {
         try {
@@ -16,19 +19,22 @@ const Login = ({ loginToggleHandler, setModelIsOpen, setAnyChange, setUserName }
 
             if (response.data.message === "MISSING") {
                 console.log("All fields are mandatory");
+                return 0;
             }
             else if (response.data.message === "NOT REGISTERED") {
                 console.log("Your are not registered. Please Register first");
+                return 0;
             }
             else if (response.data.message === "WRONG") {
                 console.log("Email or Password is Wrong");
+                return 0;
             }
             else if (response.data.accessToken) {
                 console.log("response", response.data);
-                localStorage.setItem("accessToken", response.data.accessToken);
-                setUserName((response.data.name).split(' ')[0]);
+                localStorage.setItem("nameAndToken", JSON.stringify({token: response.data.accessToken, name: response.data.name}));
                 setAnyChange(prev => !prev);
                 console.log("Token generated and saved in local Storage");
+                return 1;
             }
         }
         catch (e) {
@@ -37,7 +43,10 @@ const Login = ({ loginToggleHandler, setModelIsOpen, setAnyChange, setUserName }
     }
     function handleLogin(e) {
         e.preventDefault();
-        loginUser(emailRef.current.value.trim(), passwordRef.current.value.trim());
+        const res = loginUser(emailRef.current.value.trim(), passwordRef.current.value.trim());
+        res.then(r => {
+            if(r) navigate('/');
+        });
         setModelIsOpen(false);
     }
 

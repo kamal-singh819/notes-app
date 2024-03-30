@@ -1,15 +1,15 @@
 import { HiOutlineLogout } from "react-icons/hi";
 import styles from './logoutUser.module.scss';
-const LogoutUserComponent = ({ setAnyChange, userName }) => {
+const LogoutUserComponent = ({ setAnyChange}) => {
 
     function handleLogout() {
         console.log("Logout");
-        localStorage.removeItem("accessToken");
+        localStorage.removeItem("nameAndToken");
         setAnyChange(prev => !prev);
     }
 
     return <div className={styles.logoutContainer}>
-        <p>{userName}</p>
+        <p>{JSON.parse(localStorage.getItem('nameAndToken'))?.name}</p>
         <HiOutlineLogout className={styles.logoutButton} onClick={handleLogout} />
     </div>
 }

@@ -15,6 +15,10 @@
             display: flex;
             overflow-x: scroll;
             gap: 1rem;
+            .activeCategory {
+                background-color: black;
+                color: white;
+            }
             >p {
                 border: 1px solid black;
                 padding: 0.5rem 1rem;

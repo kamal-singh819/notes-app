@@ -2,7 +2,6 @@ import Modal from 'react-modal';
 import styles from './addTask.module.scss';
 import { useRef } from 'react';
 import axios from 'axios';
-import Button from '../button/Button';
 
 
 const modalStyle = {
@@ -19,9 +18,10 @@ const modalStyle = {
 Modal.setAppElement('#root');
 
 const AddNewTask = ({ addTaskModal, setAddTaskModal, setAnyChange }) => {
-    const token = localStorage.getItem("accessToken");
+    const token = JSON.parse(localStorage.getItem("nameAndToken"))?.token;
     const titleRef = useRef();
     const descriptionRef = useRef();
+
     function closeModal() {
         setAddTaskModal(false);
     }
@@ -53,6 +53,7 @@ const AddNewTask = ({ addTaskModal, setAddTaskModal, setAnyChange }) => {
         setAddTaskModal(false);
         setAnyChange(prev => !prev);
     }
+
     return <>
         <div>
             <Modal isOpen={addTaskModal} onRequestClose={closeModal} style={modalStyle} contentLabel='Add Task Modal'>

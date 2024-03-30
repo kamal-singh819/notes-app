@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom';
 import styles from './LoginRegister.module.scss';
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const Register = ({ loginToggleHandler }) => {
-    // const [userRegisterDetails, setUserRegisterDetails] = useState({});
+    const navigate = useNavigate();
     const nameRef = useRef();
     const emailRef = useRef();
     const phoneRef = useRef();
     const passwordRef = useRef();
     async function registerUser(name, email, phone, password) {
+        console.log(name, email, phone, password );
         try {
             const response = await axios({
                 method: 'post',
@@ -26,8 +28,9 @@ const Register = ({ loginToggleHandler }) => {
     }
     function handleRegister(e) {
         e.preventDefault();
-        registerUser(nameRef.current.name.trim(), emailRef.current.email.trim(), phoneRef.current.phone.trim(), passwordRef.current.password.trim());
+        registerUser(nameRef.current.value.trim(), emailRef.current.value.trim(), phoneRef.current.value.trim(), passwordRef.current.value.trim());
         loginToggleHandler(true);
+        navigate('/login');
     }
 
     return <div className={styles.registerContainer}>

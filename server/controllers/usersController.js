@@ -42,7 +42,6 @@ const loginController = async (req, res) => {
                 const accessToken = jwt.sign({
                     id: user[0]._id
                 }, process.env.ACCESS_TOKEN_KEY, { expiresIn: '540m' });
-                console.log(accessToken);
                 return res.send({ statusCode: 200, accessToken: accessToken, name: user[0].name });
             }
             else return res.json({ success: false, message: 'UNMATCHED' });

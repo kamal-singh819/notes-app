@@ -78,7 +78,7 @@ const deleteNoteController = async (req, res) => {
 
 const latestUpdatedController = async (req, res) => {
     try {
-        const data = await notesModel.find({ user_id: req.id }).sort({ updatedAt: -1 }).limit(3);
+        const data = await notesModel.find({ user_id: req.id, isHide: false }).sort({ updatedAt: -1 }).limit(3);
         return res.status(200).send({ message: "Last three updated", data: data });
     } catch (error) {
         return res.status(404).send({ message: "Route not found", data: null });
@@ -88,13 +88,14 @@ const latestUpdatedController = async (req, res) => {
 const hideNotesController = async (req, res) => {
     try {
         const hideIds = req.body;
+        const singleHideId = req.query.id
         console.log(hideIds);
         if (Array.isArray(hideIds)) {
             await notesModel.updateMany({ user_id: req.id, _id: { $in: hideIds } }, { $set: { isHide: true } });
             return res.status(200).send({ message: "Multiple Soft Delete or Hide successfull" });
         }
-        else {
-            await notesModel.updateOne({ user_id: req.id, _id: hideIds }, { $set: { isHide: true } });
+        if(singleHideId){
+            await notesModel.updateOne({ user_id: req.id, _id: singleHideId }, { $set: { isHide: true } });
             return res.status(200).send({ message: "Single Soft Delete or Hide successfull" });
         }
     } catch (error) {

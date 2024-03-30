@@ -6,10 +6,10 @@ import LogoutUserComponent from "../logoutUser/LogoutUserComponent";
 import axios from "axios";
 
 
-const Navbar = ({ openModal, setCategoryNotes, setAnyChange, userName }) => {
-    const token = localStorage.getItem("accessToken");
+const Navbar = ({ openModal, setCategoryNotes, setAnyChange }) => {
+    const token = JSON.parse(localStorage.getItem("nameAndToken"))?.token;
     const searchRef = useRef();
-    const isLoggedIn = !!(localStorage.getItem("accessToken"));
+    const isLoggedIn = !!token;
 
     async function searchItems(searchValue) {
         const response = await axios({
@@ -22,7 +22,7 @@ const Navbar = ({ openModal, setCategoryNotes, setAnyChange, userName }) => {
         setCategoryNotes(response.data.data);
     }
     function handleSearch() {
-        searchItems(searchRef.current.value.trim());
+        if(isLoggedIn) searchItems(searchRef.current.value.trim());
     }
 
     return <nav className={styles.navbar}>
@@ -30,7 +30,7 @@ const Navbar = ({ openModal, setCategoryNotes, setAnyChange, userName }) => {
             <input ref={searchRef} onChange={handleSearch} type="search" placeholder="Search Your Notes" />
             <FaSearch className={styles.searchIcon} />
         </form>
-        {isLoggedIn ? <LogoutUserComponent setAnyChange={setAnyChange} userName={userName} /> : <Link to="/login" className={styles.loginButton} onClick={() => openModal(true)}>Login</Link>}
+        {isLoggedIn ? <LogoutUserComponent setAnyChange={setAnyChange} /> : <Link to="/login" className={styles.loginButton} onClick={() => openModal(true)}>Login</Link>}
     </nav>
 }
 
