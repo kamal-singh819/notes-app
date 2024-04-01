@@ -36,7 +36,6 @@ const addNoteController = async (req, res) => {
         if (alreadyPresent) {
             return res.send({ statusCode: 400, message: "EXISTS" });
         }
-        console.log('jfhk asdhfljsahd fjsh');
         const newNote = new notesModel({ ...obj, user_id: req.id });
         await newNote.save();
         return res.status(201).send({ message: "Note Created!", data: newNote });
