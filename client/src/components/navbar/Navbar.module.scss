@@ -7,7 +7,14 @@
     display: flex;
     justify-content: space-between;
     padding: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    >h2 {
+        font-family: cursive;
+        cursor: pointer;
+    }
     >form {
+        order: 1;
         display: flex;
         gap: 0.5rem;
         justify-content: space-between;
@@ -15,7 +22,7 @@
         border: 1px solid grey;
         padding: 0.5rem 1rem;
         border-radius: 0.3rem;
-        width: 72%;
+        width: 100%;
         >input {
             font-size: 1.1rem;
             border: none;
@@ -41,6 +48,15 @@
             background-color: black;
             color: white;
             border: 1px solid black;
+        }
+    }
+}
+
+@media (min-width: 702px) {
+    .navbar {
+        >form {
+            width: 72%;
+            order: 0;
         }
     }
 }

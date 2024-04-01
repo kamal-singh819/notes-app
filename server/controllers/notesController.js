@@ -34,28 +34,28 @@ const addNoteController = async (req, res) => {
         // here req.id is coming after token validation
         const alreadyPresent = await notesModel.findOne({ title: obj.title, user_id: req.id });
         if (alreadyPresent) {
-            return res.status(400).json({ message: "Note is already added" });
+            return res.send({ statusCode: 400, message: "EXISTS" });
         }
+        console.log('jfhk asdhfljsahd fjsh');
         const newNote = new notesModel({ ...obj, user_id: req.id });
         await newNote.save();
         return res.status(201).send({ message: "Note Created!", data: newNote });
     } catch (error) {
-        return res.status(404).send({ message: "Route not found", data: null, error });
+
+        return res.status(404).send({ message: "Route not found", data: null });
     }
 }
 
 const updateNoteController = async (req, res) => {
     try {
         const updateId = req.query.id;
+        const newData = req.body;
         const note = await notesModel.findById(updateId);
-        if (!note) {
-            throw new Error("Note does not exist.");
-        }
-        if (note.user_id.toString() !== req.id) throw new Error("You don't have permission to update this note");
-        await notesModel.updateOne({ _id: updateId }, { $set: req.body });
+        if (note.user_id.toString() !== req.id) return res.send({ statusCode: 400, message: "You don't have permission to update this note" });
+        if (note.title !== newData.title || note.description !== newData.description) await notesModel.updateOne({ _id: updateId }, { $set: newData });
         return res.status(200).send({ message: "Note updated successfully" });
     } catch (error) {
-        return await res.status(404).send({ message: error, data: null, status: 404 });
+        return res.status(404).send({ message: error, data: null, status: 404 });
     }
 }
 
@@ -67,7 +67,7 @@ const deleteNoteController = async (req, res) => {
             await notesModel.deleteMany({ user_id: req.id, _id: { $in: arrOfIdToDelete } });
             return res.status(200).send({ message: "Multiple Notes Deleted successfully" });
         }
-        if(deleteId) {
+        if (deleteId) {
             await notesModel.deleteOne({ user_id: req.id, _id: deleteId });
             return res.status(200).send({ message: "Single Note Deleted successfully" });
         }
@@ -89,7 +89,7 @@ const latestUpdatedController = async (req, res) => {
 const hideNotesController = async (req, res) => {
     try {
         const singleHideId = req.query.id
-        if(singleHideId){
+        if (singleHideId) {
             const note = await notesModel.findOne({ user_id: req.id, _id: singleHideId });
             const reverseHide = !note.isHide;
             await notesModel.updateOne({ user_id: req.id, _id: singleHideId }, { $set: { isHide: reverseHide } });

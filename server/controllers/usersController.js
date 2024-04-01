@@ -6,7 +6,7 @@ const registerController = async (req, res) => {
     try {
         const { name, email, phone, password } = req.body;
         if (!name || !email || !phone || !password) {
-            return res.send({ statusCode: 400, message: "All fields are mandatory" });
+            return res.send({ statusCode: 400, message: "MISSING" });
         }
         const userAvailabe = await usersModel.find({ email });
         if (userAvailabe.length) {

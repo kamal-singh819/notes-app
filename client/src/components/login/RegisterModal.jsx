@@ -1,6 +1,6 @@
 import Modal from 'react-modal';
 import { useRef } from 'react';
-import axios from 'axios';
+import { registerUser } from '../../helper/ApiCallFunctions';
 import styles from './LoginRegister.module.scss';
 
 const modalStyle = {
@@ -23,28 +23,16 @@ const RegisterModal = ({ setRegisterModal, registerModal, setLoginModal }) => {
     const phoneRef = useRef();
     const passwordRef = useRef();
 
-    async function registerUser(name, email, phone, password) {
-        console.log(name, email, phone, password );
-        try {
-            const response = await axios({
-                method: 'post',
-                url: `http://localhost:5001/users/register`,
-                data: { name, email, phone, password }
-            });
-
-            if (response.data.message === "EXISTS") {
-                console.log("User is already Exists., So Plase Login");
-            }
-        }
-        catch {
-            console.log('Error');
-        }
-    }
     function handleRegister(e) {
         e.preventDefault();
-        registerUser(nameRef.current.value.trim(), emailRef.current.value.trim(), phoneRef.current.value.trim(), passwordRef.current.value.trim());
-        setLoginModal(true);
-        setRegisterModal(false);
+        registerUser(nameRef.current.value.trim(), emailRef.current.value.trim(), phoneRef.current.value.trim(), passwordRef.current.value.trim())
+            .then(r => {
+                if (!r) return;
+                else {
+                    setLoginModal(true);
+                    setRegisterModal(false);
+                }
+            })
     }
 
     function closeModal() {
@@ -63,7 +51,7 @@ const RegisterModal = ({ setRegisterModal, registerModal, setLoginModal }) => {
                     <input ref={nameRef} type="text" placeholder='e.g. Mark John' />
                     <input ref={emailRef} type="email" placeholder='e.g. example@gmail.com' />
                     <input ref={phoneRef} type="tel" placeholder='e.g. 81XXXXXXXX' />
-                    <input ref={passwordRef} type='password' placeholder='Password'/>
+                    <input ref={passwordRef} type='password' placeholder='Password' />
                     <button type='submit'>REGISTER</button>
                 </form>
                 <div className={styles.loginRegisterHere}>

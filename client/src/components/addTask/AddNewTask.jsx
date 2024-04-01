@@ -1,8 +1,8 @@
 import Modal from 'react-modal';
 import styles from './addTask.module.scss';
-import { useRef } from 'react';
-import axios from 'axios';
-
+import { useEffect, useState } from 'react';
+import { addTaskApiCall, updateTaskApiCall } from '../../helper/ApiCallFunctions';
+import { SweetAlert, SweetAlertError } from '../../helper/SweetAlert';
 
 const modalStyle = {
     content: {
@@ -12,45 +12,44 @@ const modalStyle = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
+        backgroundColor: '#a2d2ff'
     },
 }
 
 Modal.setAppElement('#root');
 
-const AddNewTask = ({ addTaskModal, setAddTaskModal, setAnyChange }) => {
-    const token = JSON.parse(localStorage.getItem("nameAndToken"))?.token;
-    const titleRef = useRef();
-    const descriptionRef = useRef();
-
+const AddNewTask = ({ addTaskModal, setAddTaskModal, setAnyChange, editableTask, setEditableTask }) => {
+    const isAnythingToEdit = JSON.stringify(editableTask) !== '{}';
+    const [titleState, setTitleState] = useState('');
+    const [descpState, setDescpState] = useState('');
     function closeModal() {
+        setEditableTask({});
+        setTitleState('');
+        setDescpState('');
         setAddTaskModal(false);
     }
 
-    async function addTaskApiCall(title, description) {
-        try {
-            const response = await axios({
-                method: 'post',
-                url: `http://localhost:5001/notes/upload`,
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-                data: { title, description }
-            })
-            console.log(response.data.message);
+    useEffect(() => {
+        if (isAnythingToEdit) {
+            setTitleState(editableTask.title);
+            setDescpState(editableTask.description);
         }
-        catch (e) {
-            console.log(e.message);
-        }
-    }
+    }, [editableTask]);
 
     function handleAddTaskForm(e) {
         e.preventDefault();
-        if (!titleRef.current.value.trim() || !descriptionRef.current.value.trim()) {
-            console.log("Title and Description is mandatory");
+        const trimmedTitle = titleState.trim();
+        const trimmedDescp = descpState.trim();
+        if (!trimmedTitle || !trimmedDescp) {
+            SweetAlertError('All Fields Are Mandatory!');
+            setAddTaskModal(false);
             return;
         }
-        addTaskApiCall(titleRef.current.value.trim(), descriptionRef.current.value.trim());
+        isAnythingToEdit ? updateTaskApiCall(trimmedTitle, trimmedDescp, editableTask._id) : addTaskApiCall(trimmedTitle, trimmedDescp);
+        isAnythingToEdit ? SweetAlert("Note Updated Successfully!") : SweetAlert("Note Created Successfully!");
         setAddTaskModal(false);
+        setTitleState('');
+        setDescpState('');
         setAnyChange(prev => !prev);
     }
 
@@ -58,10 +57,11 @@ const AddNewTask = ({ addTaskModal, setAddTaskModal, setAnyChange }) => {
         <div>
             <Modal isOpen={addTaskModal} onRequestClose={closeModal} style={modalStyle} contentLabel='Add Task Modal'>
                 <button onClick={closeModal} className={styles.modalCloseButton}>X</button>
+                <h2>Add NOTE</h2>
                 <form onSubmit={handleAddTaskForm} className={styles.addTaskForm}>
-                    <input ref={titleRef} type="text" placeholder='Title' />
-                    <textarea ref={descriptionRef} rows="4" placeholder='Description'></textarea>
-                    <button type='submit'>ADD TASK</button>
+                    <input onChange={(e) => setTitleState(e.target.value)} value={titleState} type="text" placeholder='Title' />
+                    <textarea onChange={(e) => setDescpState(e.target.value)} value={descpState} rows="4" placeholder='Description'></textarea>
+                    <button type='submit'> {isAnythingToEdit ? "UPDATE" : "ADD"}</button>
                 </form>
             </Modal>
         </div>
