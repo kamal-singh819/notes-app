@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { fetchData, handleMultiDelete } from '../../helper/ApiCallFunctions';
 
 const HomePage = ({ openAddTaskModal, categoryNotes, setCategoryNotes, anyChange, setAnyChange, handleEditTask }) => {
-    const [category, setCategory] = useState('get-notes/?value=active'); //by default get all the notes
-    const [categoryStyle, setCategoryStyle] = useState('Active'); //by default all selected
+    const [category, setCategory] = useState('get-notes'); //by default get all the notes
+    const [categoryStyle, setCategoryStyle] = useState('All'); //by default all selected
     const [multiDeleteNotes, setMultiDeleteNotes] = useState([]);
     const token = JSON.parse(localStorage.getItem("nameAndToken"))?.token;
     const isLoggedIn = !!token;

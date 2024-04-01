@@ -12,7 +12,8 @@ function App() {
     const [loginModal, setLoginModal] = useState(false);
     const [registerModal, setRegisterModal] = useState(false);
     const [addTaskModal, setAddTaskModal] = useState(false);
-    const [editableTask, setEditableTask] = useState({});
+    const [editableTask, setEditableTask] = useState(null);
+
     const username = JSON.parse(localStorage.getItem("nameAndToken"))?.name;
     function openLoginModal() {
         setLoginModal(true);

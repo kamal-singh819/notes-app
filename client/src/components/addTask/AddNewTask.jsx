@@ -19,14 +19,12 @@ const modalStyle = {
 Modal.setAppElement('#root');
 
 const AddNewTask = ({ addTaskModal, setAddTaskModal, setAnyChange, editableTask, setEditableTask }) => {
-    const isAnythingToEdit = JSON.stringify(editableTask) !== '{}';
+    const isAnythingToEdit = !!editableTask;
     const [titleState, setTitleState] = useState('');
     const [descpState, setDescpState] = useState('');
     function closeModal() {
-        setEditableTask({});
-        setTitleState('');
-        setDescpState('');
         setAddTaskModal(false);
+        setEditableTask(null);
     }
 
     useEffect(() => {
@@ -47,7 +45,7 @@ const AddNewTask = ({ addTaskModal, setAddTaskModal, setAnyChange, editableTask,
         }
         isAnythingToEdit ? updateTaskApiCall(trimmedTitle, trimmedDescp, editableTask._id) : addTaskApiCall(trimmedTitle, trimmedDescp);
         isAnythingToEdit ? SweetAlert("Note Updated Successfully!") : SweetAlert("Note Created Successfully!");
-        setAddTaskModal(false);
+        closeModal();
         setTitleState('');
         setDescpState('');
         setAnyChange(prev => !prev);
