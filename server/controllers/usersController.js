@@ -41,7 +41,7 @@ const loginController = async (req, res) => {
             else if (resp) {
                 const accessToken = jwt.sign({
                     id: user[0]._id
-                }, process.env.ACCESS_TOKEN_KEY, { expiresIn: '540m' });
+                }, process.env.ACCESS_TOKEN_KEY, { expiresIn: '1440m' });
                 return res.send({ statusCode: 200, accessToken: accessToken, name: user[0].name });
             }
             else return res.json({ success: false, message: 'UNMATCHED' });
@@ -51,12 +51,5 @@ const loginController = async (req, res) => {
         return res.status(404).json({ message: error });
     }
 }
-const currentUserController = async (req, res) => {
-    try {
-        res.json({ LoggedInUserId: req.id });
-    } catch (error) {
-        res.status(404).json({ error: 404, message: "Route not found." });
-    }
-}
 
-export { registerController, loginController, currentUserController };
+export { registerController, loginController };

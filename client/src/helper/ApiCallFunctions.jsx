@@ -55,93 +55,73 @@ async function handleHide(currentId, setAnyChange) {
 
 async function addTaskApiCall(title, description) {
     const token = JSON.parse(localStorage.getItem("nameAndToken"))?.token;
-    try {
-        const response = await axios({
-            method: "post",
-            url: `http://localhost:5001/notes/upload`,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            data: { title, description },
-        });
-        if (response.data.message === 'EXISTS') {
-            SweetAlertError("Title Is Already Exists!");
-        }
-    } catch (e) {
-        console.log('Error');
+    const response = await axios({
+        method: "post",
+        url: `http://localhost:5001/notes/upload`,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        data: { title, description },
+    });
+    if (response.data.message === 'EXISTS') {
+        SweetAlertError("Title Is Already Exists!");
     }
 }
 async function updateTaskApiCall(title, description, id) {
     const token = JSON.parse(localStorage.getItem("nameAndToken"))?.token;
-    try {
-        const response = await axios({
-            method: "put",
-            url: `http://localhost:5001/notes/update/?id=${id}`,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            data: { title, description },
-        });
-        if (response.data.message === 'EXISTS') {
-            SweetAlertError("Title Is Already Exists!");
-        }
-    } catch (e) {
-        console.log(e.message);
+    const response = await axios({
+        method: "put",
+        url: `http://localhost:5001/notes/update/?id=${id}`,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        data: { title, description },
+    });
+    if (response.data.message === 'EXISTS') {
+        SweetAlertError("Title Is Already Exists!");
     }
 }
 
 async function loginUser(email, password, setAnyChange) {
-    try {
-        const response = await axios({
-            method: 'post',
-            url: `http://localhost:5001/users/login`,
-            data: { email, password }
-        });
-
-        if (response.data.message === "MISSING") {
-            SweetAlertError('All Fields Are Mandatory!');
-            return 0;
-        }
-        else if (response.data.message === "NOT REGISTERED") {
-            SweetAlertError('Your Are Not Registered');
-            return 0;
-        }
-        else if (response.data.message === "UNMATCHED") {
-            SweetAlertError('Email or Password is Wrong');
-            return 0;
-        }
-        else if (response.data.accessToken) {
-            localStorage.setItem("nameAndToken", JSON.stringify({ token: response.data.accessToken, name: response.data.name }));
-            setAnyChange(prev => !prev);
-            SweetAlert("Loggin Successfully!");
-            return 1;
-        }
+    const response = await axios({
+        method: 'post',
+        url: `http://localhost:5001/users/login`,
+        data: { email, password }
+    });
+    if (response.data.message === "MISSING") {
+        SweetAlertError('All Fields Are Mandatory!');
+        return 0;
     }
-    catch (e) {
-        console.log(e.message);
+    else if (response.data.message === "NOT REGISTERED") {
+        SweetAlertError('Your Are Not Registered');
+        return 0;
+    }
+    else if (response.data.message === "UNMATCHED") {
+        SweetAlertError('Email or Password is Wrong');
+        return 0;
+    }
+    else if (response.data.accessToken) {
+        localStorage.setItem("nameAndToken", JSON.stringify({ token: response.data.accessToken, name: response.data.name }));
+        setAnyChange(prev => !prev);
+        SweetAlert("Loggin Successfully!");
+        return 1;
     }
 }
 
 async function registerUser(name, email, phone, password) {
-    console.log(name, email, phone, password);
-    try {
-        const response = await axios({
-            method: 'post',
-            url: `http://localhost:5001/users/register`,
-            data: { name, email, phone, password }
-        });
+    const response = await axios({
+        method: 'post',
+        url: `http://localhost:5001/users/register`,
+        data: { name, email, phone, password }
+    });
 
-        if (response.data.message === "EXISTS") {
-            SweetAlertError("User Is Already Exists!");
-            return 0;
-        }
-        if (response.data.message === "MISSING") {
-            SweetAlertError("All Fields Are Mandatory!");
-            return 0;
-        }
+    if (response.data.message === "EXISTS") {
+        SweetAlertError("User Is Already Exists!");
+        return 0;
     }
-    catch {
-        console.log('Error');
+    if (response.data.message === "MISSING") {
+        SweetAlertError("All Fields Are Mandatory!");
+        return 0;
     }
 }
 

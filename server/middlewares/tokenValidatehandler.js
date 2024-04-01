@@ -18,11 +18,10 @@ const tokenValidateHandler = (req, res, next) => {
             });
         }
         else {
-            res.status(401);
-            throw new Error('Token is missing');
+            return res.status(401).send({message: "Token is missing"});
         }
     } catch (error) {
-        res.status(401).json({ message: 'Token is missing or User is unauthorized' });
+        return res.status(401).send({ message: 'Token is missing or User is unauthorized' });
     }
 }
 

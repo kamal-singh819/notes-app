@@ -40,7 +40,6 @@ const AddNewTask = ({ addTaskModal, setAddTaskModal, setAnyChange, editableTask,
         const trimmedDescp = descpState.trim();
         if (!trimmedTitle || !trimmedDescp) {
             SweetAlertError('All Fields Are Mandatory!');
-            setAddTaskModal(false);
             return;
         }
         isAnythingToEdit ? updateTaskApiCall(trimmedTitle, trimmedDescp, editableTask._id) : addTaskApiCall(trimmedTitle, trimmedDescp);

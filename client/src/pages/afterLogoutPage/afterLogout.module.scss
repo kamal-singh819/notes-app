@@ -6,6 +6,8 @@
 
 .afterLogoutContainer {
     padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
     h2 {
         font-style: italic;
     }

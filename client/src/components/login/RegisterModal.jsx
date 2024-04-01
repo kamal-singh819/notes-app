@@ -27,7 +27,7 @@ const RegisterModal = ({ setRegisterModal, registerModal, setLoginModal }) => {
         e.preventDefault();
         registerUser(nameRef.current.value.trim(), emailRef.current.value.trim(), phoneRef.current.value.trim(), passwordRef.current.value.trim())
             .then(r => {
-                if (!r) return;
+                if (r===0) return;
                 else {
                     setLoginModal(true);
                     setRegisterModal(false);
