@@ -50,6 +50,8 @@ const updateNoteController = async (req, res) => {
         const updateId = req.query.id;
         const newData = req.body;
         const note = await notesModel.findById(updateId);
+        const alreadyPresent = await notesModel.find({ title: newData.title, user_id: req.id });
+        if (alreadyPresent.length) return res.send({ statusCode: 400, message: "EXISTS" });
         if (note.user_id.toString() !== req.id) return res.send({ statusCode: 400, message: "You don't have permission to update this note" });
         if (note.title !== newData.title || note.description !== newData.description) await notesModel.updateOne({ _id: updateId }, { $set: newData });
         return res.status(200).send({ message: "Note updated successfully" });
